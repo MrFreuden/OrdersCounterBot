@@ -60,7 +60,7 @@ namespace OrdersCounterBot
         private static string GetApiToken()
         {
             DotNetEnv.Env.Load();
-            string? apiToken = Environment.GetEnvironmentVariable("API_TOKEN");
+            string? apiToken = Environment.GetEnvironmentVariable("API_TOKEN_FOR_TESTS");
             if (apiToken == null) throw new ArgumentNullException(apiToken);
             return apiToken;
         }
