@@ -45,6 +45,7 @@ namespace OrdersCounterBot
             {
                 filePath = "data.json";
             }
+            Console.WriteLine($"Getting user data storage {filePath}");
             return new UserDataStorage(filePath);
         }
         private static string GetApiToken()
@@ -80,6 +81,7 @@ namespace OrdersCounterBot
 
         public async Task HandleUpdateAsync(ITelegramBotClient client, Update update, CancellationToken token)
         {
+            Console.WriteLine("HANDLE");
             if (update.Type == UpdateType.Message && update.Message?.Text != null)
             {
                 var userId = update.Message.From.Id;
