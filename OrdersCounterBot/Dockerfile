@@ -2,8 +2,8 @@
 
 # Этот этап используется при запуске из VS в быстром режиме (по умолчанию для конфигурации отладки)
 FROM mcr.microsoft.com/dotnet/runtime:8.0 AS base
-USER app
 WORKDIR /app
+USER app
 
 
 # Этот этап используется для сборки проекта службы
