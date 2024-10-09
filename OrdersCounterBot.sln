@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.11.35219.272
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OrdersCounterBot", "OrdersCounterBot\OrdersCounterBot.csproj", "{88488E8C-DFF7-4593-8BC0-C7A51BA7EBAB}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{88488E8C-DFF7-4593-8BC0-C7A51BA7EBAB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{88488E8C-DFF7-4593-8BC0-C7A51BA7EBAB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{88488E8C-DFF7-4593-8BC0-C7A51BA7EBAB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{88488E8C-DFF7-4593-8BC0-C7A51BA7EBAB}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {A5A2597D-16C2-4D34-9B82-09A83C0D25E3}
+	EndGlobalSection
+EndGlobal
