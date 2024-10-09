@@ -12,12 +12,12 @@ namespace OrdersCounterBot
 
         private static async Task Run()
         {
-            var listener = new HttpListener();
-            var port = "8080";
-            listener.Prefixes.Add($"http://*:{port}/");
-            listener.Start();
+            //var listener = new HttpListener();
+            //var port = "8080";
+            //listener.Prefixes.Add($"http://*:{port}/");
+            //listener.Start();
 
-            Console.WriteLine($"Listening on port {port}...");
+            //Console.WriteLine($"Listening on port {port}...");
 
             var apiToken = GetApiToken();
             Console.WriteLine("Getting api token");
@@ -27,22 +27,22 @@ namespace OrdersCounterBot
 
             Console.WriteLine("Create handler");
             bot.StartReceiving(handler.HandleUpdateAsync, handler.HandleErrorAsync, cancellationToken: cts.Token);
-            //while (Console.ReadKey(true).Key != ConsoleKey.Escape) ;
-            try
-            {
-                await Task.Delay(-1, cts.Token);
-            }
-            catch (TaskCanceledException)
-            {
-                Console.WriteLine("Bot stopped.");
-            }
+            while (Console.ReadKey(true).Key != ConsoleKey.Escape) ;
+            //try
+            //{
+            //    await Task.Delay(-1, cts.Token);
+            //}
+            //catch (TaskCanceledException)
+            //{
+            //    Console.WriteLine("Bot stopped.");
+            //}
             Console.WriteLine("EXIT????");
             cts.Cancel();
-            listener.Stop();
+            //listener.Stop();
         }
         private static UserDataStorage GetUserDataStorage()
         {
-            string? filePath = null;
+            string? filePath;
             if (Environment.GetEnvironmentVariable("SERVER_ENV") == "true")
             {
                 filePath = "/secrets/data.json";
