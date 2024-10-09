@@ -8,12 +8,12 @@ namespace OrdersCounterBot
 {
     internal class Program
     {
-        static void Main(string[] args)
+        static async Task Main(string[] args)
         {
-            Run();
+            await Run();
         }
 
-        private static async void Run()
+        private static async Task Run()
         {
             var listener = new HttpListener();
             var port = "8080";
