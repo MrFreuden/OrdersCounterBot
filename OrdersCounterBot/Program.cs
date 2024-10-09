@@ -31,6 +31,7 @@ namespace OrdersCounterBot
             Console.WriteLine("Create handler");
             bot.StartReceiving(handler.HandleUpdateAsync, handler.HandleErrorAsync, cancellationToken: cts.Token);
             while (Console.ReadKey(true).Key != ConsoleKey.Escape) ;
+            Console.WriteLine("EXIT????");
             cts.Cancel();
             listener.Stop();
         }
