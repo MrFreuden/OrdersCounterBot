@@ -16,15 +16,28 @@ namespace OrdersCounterBot
 
         private static async void Run()
         {
+
             var apiToken = GetApiToken();
             using var cts = new CancellationTokenSource();
             var bot = new TelegramBotClient(apiToken);
-            var handler = new BotHandler(new UserDataStorage("data.json"), new CommandParser());
+            var handler = new BotHandler(GetUserDataStorage(), new CommandParser());
             bot.StartReceiving(handler.HandleUpdateAsync, handler.HandleErrorAsync, cancellationToken: cts.Token);
             while (Console.ReadKey(true).Key != ConsoleKey.Escape) ;
             cts.Cancel();
         }
-
+        private static UserDataStorage GetUserDataStorage()
+        {
+            string filePath = null;
+            if (Environment.GetEnvironmentVariable("SERVER_ENV") == "true")
+            {
+                filePath = "/secrets/data.json";
+            }
+            else
+            {
+                filePath = "data.json";
+            }
+            return new UserDataStorage(filePath);
+        }
         private static string GetApiToken()
         {
             DotNetEnv.Env.Load();
