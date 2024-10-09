@@ -27,7 +27,7 @@ namespace OrdersCounterBot
         }
         private static UserDataStorage GetUserDataStorage()
         {
-            string filePath = null;
+            string? filePath = null;
             if (Environment.GetEnvironmentVariable("SERVER_ENV") == "true")
             {
                 filePath = "/secrets/data.json";
