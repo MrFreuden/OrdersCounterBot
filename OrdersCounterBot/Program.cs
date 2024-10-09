@@ -1,6 +1,5 @@
-﻿using Sprache;
+﻿using System.Net;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
@@ -16,6 +15,12 @@ namespace OrdersCounterBot
 
         private static async void Run()
         {
+            //var listener = new HttpListener();
+            //var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
+            //listener.Prefixes.Add($"http://*:{port}/");
+            //listener.Start();
+
+            //Console.WriteLine($"Listening on port {port}...");
 
             var apiToken = GetApiToken();
             using var cts = new CancellationTokenSource();
@@ -24,6 +29,7 @@ namespace OrdersCounterBot
             bot.StartReceiving(handler.HandleUpdateAsync, handler.HandleErrorAsync, cancellationToken: cts.Token);
             while (Console.ReadKey(true).Key != ConsoleKey.Escape) ;
             cts.Cancel();
+            //listener.Stop();
         }
         private static UserDataStorage GetUserDataStorage()
         {

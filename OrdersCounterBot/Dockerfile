@@ -4,7 +4,7 @@
 FROM mcr.microsoft.com/dotnet/runtime:8.0 AS base
 WORKDIR /app
 USER app
-
+EXPOSE 8080
 
 # Этот этап используется для сборки проекта службы
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
