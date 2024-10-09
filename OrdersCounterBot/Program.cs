@@ -23,9 +23,12 @@ namespace OrdersCounterBot
             Console.WriteLine($"Listening on port {port}...");
 
             var apiToken = GetApiToken();
+            Console.WriteLine("Getting api token");
             using var cts = new CancellationTokenSource();
             var bot = new TelegramBotClient(apiToken);
             var handler = new BotHandler(GetUserDataStorage(), new CommandParser());
+
+            Console.WriteLine("Create handler");
             bot.StartReceiving(handler.HandleUpdateAsync, handler.HandleErrorAsync, cancellationToken: cts.Token);
             while (Console.ReadKey(true).Key != ConsoleKey.Escape) ;
             cts.Cancel();
