@@ -35,6 +35,13 @@ namespace OrdersCounterBot
             }
         }
 
+        public async Task SaveDataAsync(UserService service)
+        {
+            Console.WriteLine("Начало сохранения");
+            await Task.Run(() => SaveData(service));
+            Console.WriteLine("Конец сохранения");
+        }
+
         private void SaveData(UserService service)
         {
             lock (_lock)
@@ -51,11 +58,17 @@ namespace OrdersCounterBot
             }
         }
 
-        public async Task SaveDataAsync(UserService service)
+        public static string GetDefaultPath()
         {
-            Console.WriteLine("Начало сохранения");
-            await Task.Run(() => SaveData(service));
-            Console.WriteLine("Конец сохранения");
+            return Environment.GetEnvironmentVariable("SERVER_ENV") == "true"
+                ? DefaultPaths.ServerDataPath
+                : DefaultPaths.LocalDataPath;
         }
+    }
+
+    public static class DefaultPaths
+    {
+        public const string ServerDataPath = "/secrets/data.json";
+        public const string LocalDataPath = "data.json";
     }
 }
