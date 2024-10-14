@@ -16,9 +16,9 @@ namespace OrdersCounterBot
         {
             using var cts = new CancellationTokenSource();
             var bot = new TelegramBotClient(apiToken);
-            var updateProcessor = new ProccessMessageUpdate(
+            var updateProcessor = new UpdateMessageProcessor(
                 new UserDataStorage(UserDataStorage.GetDefaultPath()), new MessageSender(), new CommandProcessor(new CommandParser()));
-            var handler = new BotHandler(updateProcessor);
+            var handler = new BotHandler(bot, updateProcessor);
             Console.WriteLine("Created handler");
 
             bot.StartReceiving(handler.HandleUpdateAsync, handler.HandleErrorAsync, cancellationToken: cts.Token);

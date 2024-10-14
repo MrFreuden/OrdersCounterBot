@@ -1,47 +1,63 @@
-﻿using System.Diagnostics;
-using Telegram.Bot;
+﻿using Telegram.Bot;
+using Telegram.Bot.Polling;
 using Telegram.Bot.Types;
-using Telegram.Bot.Types.Enums;
 
 namespace OrdersCounterBot
 {
-    public class BotHandler
+    public class BotHandler : IUpdateHandler
     {
         private readonly IUpdateProcessor _updateProcessor;
-
-        public BotHandler(IUpdateProcessor updateProcessor)
+        private readonly ITelegramBotClient _bot;
+        public BotHandler(ITelegramBotClient botClient, IUpdateProcessor updateProcessor)
         {
+            _bot = botClient;
             _updateProcessor = updateProcessor;
         }
 
-        public async Task HandleUpdateAsync(ITelegramBotClient client, Update update, CancellationToken token)
+        public async Task HandleUpdateAsync(ITelegramBotClient botClient, Update update, CancellationToken cancellationToken)
         {
-            if (update.Type == UpdateType.Message && update.Message?.Text != null)
+            cancellationToken.ThrowIfCancellationRequested();
+            await (update switch
             {
-                 await _updateProcessor.Process(client, update); 
-            }
+                { Message: { } message } => _updateProcessor.ProcessMessage(_bot, message),
+                //{ EditedMessage: { } message } => OnMessage(message),
+                //{ CallbackQuery: { } callbackQuery } => OnCallbackQuery(callbackQuery),
+                //{ InlineQuery: { } inlineQuery } => OnInlineQuery(inlineQuery),
+                //{ ChosenInlineResult: { } chosenInlineResult } => OnChosenInlineResult(chosenInlineResult),
+                _ => UnknownUpdateHandlerAsync(update)
+            });
         }
 
-        public async Task HandleErrorAsync(ITelegramBotClient client, Exception exception, CancellationToken token)
+        private Task UnknownUpdateHandlerAsync(Update update)
+        {
+            return Task.CompletedTask;
+        }
+
+        public async Task HandleErrorAsync(ITelegramBotClient botClient, Exception exception, CancellationToken cancellationToken)
         {
             Console.WriteLine(exception);
-            await Task.Delay(2000, token);
+            await Task.Delay(2000, cancellationToken);
+        }
+
+        public Task HandlePollingErrorAsync(ITelegramBotClient botClient, Exception exception, CancellationToken cancellationToken)
+        {
+            return Task.CompletedTask;
         }
     }
 
     public interface IUpdateProcessor
     {
-        Task Process(ITelegramBotClient client, Update update);
+        Task ProcessMessage(ITelegramBotClient client, Message update);
     }
 
-    public class ProccessMessageUpdate : IUpdateProcessor
+    public class UpdateMessageProcessor : IUpdateProcessor
     {
         private readonly UserService _userService;
         private readonly UserDataStorage _dataStorage;
         private readonly MessageSender _messageSender;
         private readonly CommandProcessor _commandProcessor;
 
-        public ProccessMessageUpdate(UserDataStorage dataStorage, MessageSender messageSender, CommandProcessor commandProcessor)
+        public UpdateMessageProcessor(UserDataStorage dataStorage, MessageSender messageSender, CommandProcessor commandProcessor)
         {
             _dataStorage = dataStorage;
             _messageSender = messageSender;
@@ -49,12 +65,12 @@ namespace OrdersCounterBot
             _userService = _dataStorage.LoadData();
         }
 
-        public async Task Process(ITelegramBotClient client, Update update)
+        public async Task ProcessMessage(ITelegramBotClient client, Message msg)
         {
-            var userId = update.Message.From.Id;
-            var response = _commandProcessor.ProcessCommand(update.Message.Text!, _userService, userId);
+            var userId = msg.From.Id;
+            var response = _commandProcessor.ProcessCommand(msg.Text!, _userService, userId);
 
-            await _messageSender.SendResponseAsync(client, update.Message.Chat.Id, response);
+            await _messageSender.SendResponseAsync(client, msg.Chat.Id, response);
             await _dataStorage.SaveDataAsync(_userService);
         }
     }
