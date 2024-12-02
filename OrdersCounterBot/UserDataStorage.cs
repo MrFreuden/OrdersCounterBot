@@ -60,9 +60,14 @@ namespace OrdersCounterBot
 
         public static string GetDefaultPath()
         {
-            return Environment.GetEnvironmentVariable("SERVER_ENV") == "true"
-                ? DefaultPaths.ServerDataPath
-                : DefaultPaths.LocalDataPath;
+            var directory = "/OrdersCounterBot/docker_data";
+
+            if (!Directory.Exists(directory))
+            {
+                Directory.CreateDirectory(directory);
+            }
+
+            return Path.Combine(directory, "data.json");
         }
     }
 
