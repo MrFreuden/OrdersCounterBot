@@ -35,7 +35,10 @@
         {
             lock (_lock)
             {
-                _userLists[userId].Add(value);
+                if (_userLists.ContainsKey(userId))
+                {
+                    _userLists[userId].Add(value);
+                }
             }
         }
 
