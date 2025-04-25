@@ -49,7 +49,7 @@ namespace OrdersCounterBot
         {
             var listener = new HttpListener();
             var port = "8080";
-            listener.Prefixes.Add($"*:{port}/");
+            listener.Prefixes.Add($"http://*:{port}/");
             listener.Start();
             Console.WriteLine($"Listening on port {port}...");
             return listener;
