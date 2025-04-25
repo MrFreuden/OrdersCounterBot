@@ -1,6 +1,7 @@
 ﻿using Telegram.Bot;
 using Telegram.Bot.Polling;
 using Telegram.Bot.Types;
+using Telegram.Bot.Types.Enums;
 
 namespace OrdersCounterBot
 {
@@ -62,13 +63,25 @@ namespace OrdersCounterBot
             _dataStorage = dataStorage;
             _messageSender = messageSender;
             _commandProcessor = commandProcessor;
-            _userService = _dataStorage.LoadData();
+            var temp = _dataStorage.LoadData();
+            _userService = new(temp);
+            //_userService = temp;
         }
 
         public async Task ProcessMessage(ITelegramBotClient client, Message msg)
         {
             var userId = msg.From.Id;
-            var response = _commandProcessor.ProcessCommand(msg.Text!, _userService, userId);
+            if (msg.Type == MessageType.MigratedFromGroup || msg.Type == MessageType.MigratedToSupergroup)
+            {
+                var old = msg.MigrateFromChatId;
+                var idNew = msg.MigrateToChatId;
+                _userService.ChangeChatId(userId, (long)old, (long)idNew);
+                await _dataStorage.SaveDataAsync(_userService);
+                return;
+            }
+            
+            var chatId = msg.Chat.Id;
+            var response = _commandProcessor.ProcessCommand(msg.Text!, _userService, userId, chatId);
 
             await _messageSender.SendResponseAsync(client, msg.Chat.Id, response);
             await _dataStorage.SaveDataAsync(_userService);
@@ -92,10 +105,11 @@ namespace OrdersCounterBot
             _parser = parser;
         }
 
-        public Response ProcessCommand(string messageText, UserService userService, long userId)
+        public Response ProcessCommand(string messageText, UserService userService, long userId, long chatId)
         {
+            userService.ChangeChatId(userId, 0, chatId);
             var command = _parser.Parse(messageText);
-            return command.Invoke(userService, userId);
+            return command.Invoke(userService, userId, chatId);
         }
     }
 }

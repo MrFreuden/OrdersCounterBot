@@ -1,11 +1,10 @@
-﻿using System.Text.Json;
+﻿using Newtonsoft.Json;
 
 namespace OrdersCounterBot
 {
     public class UserDataStorage
     {
         private readonly string _path;
-        private readonly JsonSerializerOptions _options = new() { WriteIndented = true };
         private readonly object _lock = new();
 
         public UserDataStorage(string path)
@@ -13,19 +12,41 @@ namespace OrdersCounterBot
             _path = path;
         }
 
-        public UserService LoadData()
+        public OldUserService LoadData()
         {
             lock (_lock)
             {
-                if (!System.IO.File.Exists(_path))
+                if (!File.Exists(_path))
+                {
+                    return new OldUserService();
+                }
+                try
+                {
+                    var jsonString = File.ReadAllText(_path);
+                    if (jsonString != null) Console.WriteLine("Загрузка успешна");
+                    return JsonConvert.DeserializeObject<OldUserService>(jsonString) ?? new OldUserService();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Ошибка при загрузке данных: {ex.Message}");
+                    return new OldUserService();
+                }
+            }
+        }
+
+        public UserService LoadData2()
+        {
+            lock (_lock)
+            {
+                if (!File.Exists(_path))
                 {
                     return new UserService();
                 }
                 try
                 {
-                    string jsonString = System.IO.File.ReadAllText(_path);
+                    var jsonString = File.ReadAllText(DefaultPaths.LocalDataPath);
                     if (jsonString != null) Console.WriteLine("Загрузка успешна");
-                    return JsonSerializer.Deserialize<UserService>(jsonString) ?? new UserService();
+                    return JsonConvert.DeserializeObject<UserService>(jsonString) ?? new UserService();
                 }
                 catch (Exception ex)
                 {
@@ -48,8 +69,8 @@ namespace OrdersCounterBot
             {
                 try
                 {
-                    string jsonString = JsonSerializer.Serialize(service);
-                    System.IO.File.WriteAllText(_path, jsonString);
+                    var jsonString = JsonConvert.SerializeObject(service);
+                    File.WriteAllText(_path, jsonString);
                 }
                 catch (Exception ex)
                 {
@@ -67,7 +88,7 @@ namespace OrdersCounterBot
                 Directory.CreateDirectory(directory);
             }
 
-            return Path.Combine(directory, "data.json");
+            return directory + "/data.json";
         }
     }
 
