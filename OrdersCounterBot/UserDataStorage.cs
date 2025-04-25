@@ -12,29 +12,7 @@ namespace OrdersCounterBot
             _path = path;
         }
 
-        public OldUserService LoadData()
-        {
-            lock (_lock)
-            {
-                if (!File.Exists(_path))
-                {
-                    return new OldUserService();
-                }
-                try
-                {
-                    var jsonString = File.ReadAllText(_path);
-                    if (jsonString != null) Console.WriteLine("Загрузка успешна");
-                    return JsonConvert.DeserializeObject<OldUserService>(jsonString) ?? new OldUserService();
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"Ошибка при загрузке данных: {ex.Message}");
-                    return new OldUserService();
-                }
-            }
-        }
-
-        public UserService LoadData2()
+        public UserService LoadData()
         {
             lock (_lock)
             {
@@ -44,7 +22,7 @@ namespace OrdersCounterBot
                 }
                 try
                 {
-                    var jsonString = File.ReadAllText(DefaultPaths.LocalDataPath);
+                    var jsonString = File.ReadAllText(_path);
                     if (jsonString != null) Console.WriteLine("Загрузка успешна");
                     return JsonConvert.DeserializeObject<UserService>(jsonString) ?? new UserService();
                 }

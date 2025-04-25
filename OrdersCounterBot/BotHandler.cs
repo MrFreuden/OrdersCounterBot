@@ -63,9 +63,7 @@ namespace OrdersCounterBot
             _dataStorage = dataStorage;
             _messageSender = messageSender;
             _commandProcessor = commandProcessor;
-            var temp = _dataStorage.LoadData();
-            _userService = new(temp);
-            //_userService = temp;
+            _userService = _dataStorage.LoadData();
         }
 
         public async Task ProcessMessage(ITelegramBotClient client, Message msg)
@@ -83,7 +81,10 @@ namespace OrdersCounterBot
             var chatId = msg.Chat.Id;
             var response = _commandProcessor.ProcessCommand(msg.Text!, _userService, userId, chatId);
 
-            await _messageSender.SendResponseAsync(client, msg.Chat.Id, response);
+            if (!string.IsNullOrEmpty(response.Text))
+            {
+                await _messageSender.SendResponseAsync(client, msg.Chat.Id, response);
+            }
             await _dataStorage.SaveDataAsync(_userService);
         }
     }
@@ -107,7 +108,6 @@ namespace OrdersCounterBot
 
         public Response ProcessCommand(string messageText, UserService userService, long userId, long chatId)
         {
-            userService.ChangeChatId(userId, 0, chatId);
             var command = _parser.Parse(messageText);
             return command.Invoke(userService, userId, chatId);
         }
