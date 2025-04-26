@@ -5,6 +5,12 @@
     },
     "Container (Dockerfile)": {
       "commandName": "Docker"
+    },
+    "Production": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "DOTNET_ENVIRONMENT": "Production"
+      }
     }
   }
 }
