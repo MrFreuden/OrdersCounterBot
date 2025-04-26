@@ -23,24 +23,37 @@ namespace OrdersCounterBot.Telegram
 
         public async Task ProcessMessage(ITelegramBotClient client, Message msg)
         {
-            var userId = msg.From.Id;
+            if (msg.From == null) return;
+
+            if (await HandleMigrationAsync(msg)) return;
+
+            if (string.IsNullOrEmpty(msg.Text)) return;
+
+            var commandContext = GetContext(msg);
+
+            var response = _commandProcessor.ProcessCommand(_userService, commandContext);
+
+            await _messageSender.SendResponseAsync(client, msg.Chat.Id, response);
+
+            await _dataStorage.SaveDataAsync(_userService);
+        }
+
+        private async Task<bool> HandleMigrationAsync(Message msg)
+        {
             if (msg.Type == MessageType.MigratedFromGroup || msg.Type == MessageType.MigratedToSupergroup)
             {
                 var old = msg.MigrateFromChatId;
                 var idNew = msg.MigrateToChatId;
-                _userService.ChangeChatId(userId, (long)old, (long)idNew);
+                _userService.ChangeChatId(msg.From.Id, (long)old, (long)idNew);
                 await _dataStorage.SaveDataAsync(_userService);
-                return;
+                return true;
             }
+            return false;
+        }
 
-            var chatId = msg.Chat.Id;
-            var response = _commandProcessor.ProcessCommand(msg.Text!, _userService, userId, chatId);
-
-            if (!string.IsNullOrEmpty(response.Text))
-            {
-                await _messageSender.SendResponseAsync(client, msg.Chat.Id, response);
-            }
-            await _dataStorage.SaveDataAsync(_userService);
+        private CommandContext GetContext(Message msg)
+        {
+            return new CommandContext(msg.From.Id, msg.Chat.Id, msg.Text);
         }
     }
 }

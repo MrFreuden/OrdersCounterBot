@@ -6,10 +6,6 @@ namespace OrdersCounterBot.Core
     {
         public Func<UserService, long, long, Response> Parse(string text)
         {
-            if (string.IsNullOrEmpty(text))
-            {
-                return (list, userId, chatId) => { return new Response(""); };
-            }
             var splited = text.Replace(" ", "").ToLower();
 
             if (splited.StartsWith("/start"))
