@@ -7,6 +7,7 @@
             var environment = Environment.GetEnvironmentVariable("DOTNET_ENVIRONMENT") ?? "Development";
             var envFile = environment == "Production" ? ".env.production" : ".env";
             DotNetEnv.Env.Load(envFile);
+            Console.WriteLine($"[ENV] Loaded: {envFile}");
         }
 
         public static string GetApiToken()
@@ -18,9 +19,7 @@
 
         public static string GetDataPath()
         {
-            string? dataPath = Environment.GetEnvironmentVariable("DATA_PATH");
-            if (string.IsNullOrEmpty(dataPath)) throw new Exception("DATA_PATH is missing in environment.");
-            return dataPath;
+            return Environment.GetEnvironmentVariable("DATA_PATH") ?? "data.json";
         }
 
         public static string GetListenerPrefix()

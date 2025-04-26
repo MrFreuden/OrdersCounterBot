@@ -9,6 +9,7 @@ namespace OrdersCounterBot.Telegram
     {
         private readonly IUpdateProcessor _updateProcessor;
         private readonly ITelegramBotClient _bot;
+
         public BotHandler(ITelegramBotClient botClient, IUpdateProcessor updateProcessor)
         {
             _bot = botClient;

@@ -12,14 +12,6 @@
             _usersSums = new();
         }
 
-        public bool IsUserExists(long userId)
-        {
-            lock (_lock)
-            {
-                return _usersSums.ContainsKey(userId);
-            }
-        }
-
         public void AddNewUser(long userId, long chatId)
         {
             lock (_lock)
@@ -64,15 +56,15 @@
         {
             lock (_lock)
             {
-                if (_usersSums.TryGetValue(userId, out var dic))
+                if (_usersSums.TryGetValue(userId, out var chatIds))
                 {
-                    if (dic.ContainsKey(chatId))
+                    if (chatIds.ContainsKey(chatId))
                     {
-                        _usersSums[userId][chatId] += value;
+                        chatIds[chatId] += value;
                     }
                     else
                     {
-                        _usersSums[userId][chatId] = value;
+                        chatIds[chatId] = value;
                     }
                 }
             }
