@@ -1,4 +1,6 @@
-﻿namespace OrdersCounterBot
+﻿using OrdersCounterBot.Services;
+
+namespace OrdersCounterBot.Core
 {
     public class CommandParser
     {
@@ -18,7 +20,7 @@
             {
                 return (list, userId, chatId) => { list.ClearData(userId, chatId); return new Response("Конец дня"); };
             }
-            else if (Int32.TryParse(splited, out int value))
+            else if (int.TryParse(splited, out int value))
             {
                 return (list, userId, chatId) => { list.AddData(userId, chatId, value); return new Response(list.GetSum(userId, chatId).ToString()); };
             }

@@ -1,4 +1,4 @@
-﻿namespace OrdersCounterBot
+﻿namespace OrdersCounterBot.Services
 {
     [Serializable]
     public class UserService

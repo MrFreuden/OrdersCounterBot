@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace OrdersCounterBot
+namespace OrdersCounterBot.Services
 {
     public class UserDataStorage
     {
@@ -56,23 +56,5 @@ namespace OrdersCounterBot
                 }
             }
         }
-
-        public static string GetDefaultPath()
-        {
-            var directory = "/OrdersCounterBot/docker_data";
-
-            if (!Directory.Exists(directory))
-            {
-                Directory.CreateDirectory(directory);
-            }
-
-            return directory + "/data.json";
-        }
-    }
-
-    public static class DefaultPaths
-    {
-        public const string ServerDataPath = "/secrets/data.json";
-        public const string LocalDataPath = "data.json";
     }
 }

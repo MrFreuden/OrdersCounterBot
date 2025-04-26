@@ -1,5 +1,8 @@
-﻿using System.Net;
-using System.Threading;
+﻿using OrdersCounterBot.Configuration;
+using OrdersCounterBot.Core;
+using OrdersCounterBot.Services;
+using OrdersCounterBot.Telegram;
+using System.Net;
 using Telegram.Bot;
 
 namespace OrdersCounterBot
@@ -8,24 +11,15 @@ namespace OrdersCounterBot
     {
         static async Task Main(string[] args)
         {
-            var apiToken = GetApiToken();
-            Console.WriteLine("Getting api token");
-            await Run(apiToken);
+            EnvLoader.Load();
+            await Run();
         }
 
-        private static string GetApiToken()
-        {
-            DotNetEnv.Env.Load();
-            string? apiToken = Environment.GetEnvironmentVariable("API_TOKEN");
-            if (apiToken == null) throw new ArgumentNullException(apiToken);
-            return apiToken;
-        }
-
-        private static async Task Run(string apiToken)
+        private static async Task Run()
         {
             using var cts = new CancellationTokenSource();
             var listener = ConfigureHttpListener();
-            var bot = ConfigureBot(apiToken, cts);
+            var bot = ConfigureBot(EnvLoader.GetApiToken(), cts);
 
             var httpTask = HandleHttpRequestsAsync(listener, cts);
             var shutdownTask = HandleShutdownAsync(cts);
@@ -42,16 +36,14 @@ namespace OrdersCounterBot
             {
                 StopServices(listener, cts);
             }
-            Console.WriteLine("All services stopped.");
         }
 
         private static HttpListener ConfigureHttpListener()
         {
             var listener = new HttpListener();
-            var port = "8080";
-            listener.Prefixes.Add($"http://*:{port}/");
+            listener.Prefixes.Add(EnvLoader.GetListenerPrefix());
             listener.Start();
-            Console.WriteLine($"Listening on port {port}...");
+            Console.WriteLine($"Listening...");
             return listener;
         }
 
@@ -59,7 +51,7 @@ namespace OrdersCounterBot
         {
             var bot = new TelegramBotClient(apiToken);
             var updateProcessor = new UpdateMessageProcessor(
-               new UserDataStorage(UserDataStorage.GetDefaultPath()),
+               new UserDataStorage(EnvLoader.GetDataPath()),
                new MessageSender(),
                new CommandProcessor(new CommandParser()));
             var handler = new BotHandler(bot, updateProcessor);
@@ -68,7 +60,7 @@ namespace OrdersCounterBot
             Console.WriteLine("Bot is running.");
             return bot;
         }
-        
+
         private static async Task HandleHttpRequestsAsync(HttpListener listener, CancellationTokenSource cancellationToken)
         {
             while (!cancellationToken.IsCancellationRequested)

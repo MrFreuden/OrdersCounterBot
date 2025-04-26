@@ -1,4 +1,4 @@
-﻿namespace OrdersCounterBot
+﻿namespace OrdersCounterBot.Core
 {
     public class Response
     {
