@@ -1,6 +1,7 @@
 ﻿using OrdersCounterBot.Core;
 using OrdersCounterBot.Services;
 using Telegram.Bot;
+using Telegram.Bot.Exceptions;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 
@@ -33,7 +34,18 @@ namespace OrdersCounterBot.Telegram
 
             var response = _commandProcessor.ProcessCommand(_userService, commandContext);
 
-            await _messageSender.SendResponseAsync(client, msg.Chat.Id, response);
+            try
+            {
+                await _messageSender.SendResponseAsync(client, msg.Chat.Id, response);
+            }
+            catch (RequestException ex)
+            {
+                Console.WriteLine($"Ошибка Telegram API: {ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Неизвестная ошибка при отправке сообщения: {ex.Message}");
+            }
 
             await _dataStorage.SaveDataAsync(_userService);
         }
@@ -54,6 +66,11 @@ namespace OrdersCounterBot.Telegram
         private CommandContext GetContext(Message msg)
         {
             return new CommandContext(msg.From.Id, msg.Chat.Id, msg.Text);
+        }
+
+        public Task ProcessChatMember(ChatMemberUpdated myChatMember)
+        {
+            return Task.CompletedTask;
         }
     }
 }

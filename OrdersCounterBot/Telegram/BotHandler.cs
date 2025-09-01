@@ -18,10 +18,12 @@ namespace OrdersCounterBot.Telegram
 
         public async Task HandleUpdateAsync(ITelegramBotClient botClient, Update update, CancellationToken cancellationToken)
         {
+            //return;
             cancellationToken.ThrowIfCancellationRequested();
             await (update switch
             {
                 { Message: { } message } => _updateProcessor.ProcessMessage(_bot, message),
+                { MyChatMember: { } myChatMember } => _updateProcessor.ProcessChatMember(myChatMember),
                 //{ EditedMessage: { } message } => OnMessage(message),
                 //{ CallbackQuery: { } callbackQuery } => OnCallbackQuery(callbackQuery),
                 //{ InlineQuery: { } inlineQuery } => OnInlineQuery(inlineQuery),
