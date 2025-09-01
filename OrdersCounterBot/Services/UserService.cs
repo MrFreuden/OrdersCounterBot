@@ -84,7 +84,14 @@
             lock (_lock)
             {
                 if (IsIdsValid(userId, chatId))
-                    return _usersSums[userId][chatId];
+                {
+                    var val = _usersSums[userId][chatId];
+                    if (val == 0)
+                    {
+                        ClearData(userId, chatId);
+                    }
+                    return val;
+                }    
                 return 0;
             }
         }
