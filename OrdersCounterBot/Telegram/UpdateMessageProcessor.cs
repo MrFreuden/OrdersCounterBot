@@ -52,7 +52,7 @@ namespace OrdersCounterBot.Telegram
 
         private async Task<bool> HandleMigrationAsync(Message msg)
         {
-            if (msg.Type == MessageType.MigratedFromGroup || msg.Type == MessageType.MigratedToSupergroup)
+            if (msg.Type == MessageType.MigrateFromChatId || msg.Type == MessageType.MigrateToChatId)
             {
                 var old = msg.MigrateFromChatId;
                 var idNew = msg.MigrateToChatId;

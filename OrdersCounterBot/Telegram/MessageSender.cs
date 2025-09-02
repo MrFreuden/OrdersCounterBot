@@ -8,7 +8,7 @@ namespace OrdersCounterBot.Telegram
     {
         public async Task SendResponseAsync(ITelegramBotClient client, ChatId chatId, Response response)
         {
-            await client.SendTextMessageAsync(chatId, response.Text);
+            await client.SendMessage(chatId, response.Text);
         }
     }
 }

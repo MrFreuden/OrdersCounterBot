@@ -37,15 +37,15 @@ namespace OrdersCounterBot.Telegram
             return Task.CompletedTask;
         }
 
-        public async Task HandleErrorAsync(ITelegramBotClient botClient, Exception exception, CancellationToken cancellationToken)
-        {
-            Console.WriteLine(exception);
-            await Task.Delay(2000, cancellationToken);
-        }
-
         public Task HandlePollingErrorAsync(ITelegramBotClient botClient, Exception exception, CancellationToken cancellationToken)
         {
             return Task.CompletedTask;
+        }
+
+        public async Task HandleErrorAsync(ITelegramBotClient botClient, Exception exception, HandleErrorSource source, CancellationToken cancellationToken)
+        {
+            Console.WriteLine(exception);
+            await Task.Delay(2000, cancellationToken);
         }
     }
 }

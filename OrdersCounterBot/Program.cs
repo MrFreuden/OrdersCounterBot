@@ -69,7 +69,7 @@ namespace OrdersCounterBot
             using var cts = new CancellationTokenSource();
             Console.WriteLine($"Setting webhook to {webhookUrl}");
 
-            await bot.SetWebhookAsync(webhookUrl);
+            await bot.SetWebhook(webhookUrl);
 
             var listener = new HttpListener();
             var prefix = EnvLoader.GetListenerPrefix();
